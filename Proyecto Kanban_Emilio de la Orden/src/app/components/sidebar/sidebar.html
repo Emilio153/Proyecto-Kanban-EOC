@@ -1,0 +1,61 @@
+<div class="sidebar-section-label">Navegación</div>
+<nav class="sidebar-nav">
+    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-item">
+        <span class="nav-icon">🏠</span>
+        <span>Inicio</span>
+    </a>
+    <a routerLink="/usuarios" routerLinkActive="active" class="nav-item">
+        <span class="nav-icon">👥</span>
+        <span>Usuarios</span>
+    </a>
+</nav>
+
+<div class="divider"></div>
+
+<div class="sidebar-section-label">Mis Tableros</div>
+<div class="sidebar-nav">
+    @for (tablero of tableros; track tablero.id) {
+    <div class="nav-item">
+        <a [routerLink]="['/board', tablero.id]" routerLinkActive="active"
+            class="nav-item-inner">
+            <span class="board-dot" [style.background-color]="tablero.fondo"></span>
+            {{ tablero.nombre }}
+        </a>
+        <button class="btn-danger" (click)="eliminarTablero(tablero.id, $event)" title="Eliminar tablero">🗑</button>
+    </div>
+    }
+
+    <button class="btn-new-board" (click)="showAddModal = true">
+        <span>＋</span> Nuevo tablero
+    </button>
+</div>
+
+@if (showAddModal) {
+<div class="modal-backdrop" (click)="showAddModal = false">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+        <div class="modal-title">Crear tablero</div>
+
+        <div class="form-group">
+            <label class="form-label">Nombre del tablero</label>
+            <input type="text" [(ngModel)]="nuevoNombre" placeholder="Ej: Sprint Q2" class="input-field">
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Descripción</label>
+            <textarea [(ngModel)]="nuevoDesc" placeholder="¿De qué trata este tablero?" class="input-field"
+                style="height: 100px; resize: none;"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Color del tablero</label>
+            <input type="color" [(ngModel)]="nuevoColor" class="input-field"
+                style="height: 48px; padding: 4px; cursor: pointer;">
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn-secondary" (click)="showAddModal = false">Cancelar</button>
+            <button class="btn-primary" (click)="crearTablero()">Crear tablero</button>
+        </div>
+    </div>
+</div>
+}

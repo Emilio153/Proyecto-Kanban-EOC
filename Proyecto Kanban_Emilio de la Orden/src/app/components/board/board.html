@@ -1,0 +1,129 @@
+@if (tablero) {
+<div class="board-wrapper" [style.background-color]="tablero.fondo">
+    <div class="board-top-bar">
+        <div class="board-top-left">
+            <div class="board-color-pill" [style.background]="tablero.fondo"></div>
+            <div>
+                <h1 class="board-title">{{ tablero.nombre }}</h1>
+                <p class="board-desc">{{ tablero.descripcion }}</p>
+            </div>
+        </div>
+        <button class="btn-outline-primary" (click)="showAddColModal = true"
+            [class.disabled]="columnas.length >= 5">
+            ＋ Columna
+        </button>
+    </div>
+
+    <div class="board-columns" cdkDropListGroup>
+        @for (columna of columnas; track columna.id) {
+        <div class="column-wrapper">
+            <div class="column">
+                <div class="column-header">
+                    <div class="column-header-left">
+                        <span class="column-dot" [style.background]="columna.color"></span>
+                        <h3 class="column-name">{{ columna.nombre }}</h3>
+                        <span class="count-chip">{{ getTareasColumna(columna.id).length }}</span>
+                    </div>
+                    <button class="btn-danger" (click)="eliminarColumna(columna.id)" title="Eliminar columna">🗑</button>
+                </div>
+
+                <div class="tasks-container" cdkDropList
+                    [cdkDropListData]="getTareasColumna(columna.id)"
+                    [id]="columna.id.toString()"
+                    (cdkDropListDropped)="drop($event)">
+
+                    @for (tarea of getTareasColumna(columna.id); track tarea.id) {
+                    <div class="task-card" cdkDrag>
+                        <div class="task-card-header">
+                            <span class="task-title">{{ tarea.nombre }}</span>
+                            <button class="btn-danger" (click)="eliminarTarea(tarea.id)" title="Eliminar tarea">🗑</button>
+                        </div>
+                        <p class="task-desc">{{ tarea.descripcion }}</p>
+                        <div class="task-footer">
+                            <div class="user-chip" [title]="tarea.usuario.nombre + ' ' + tarea.usuario.apellido">
+                                {{ tarea.usuario.nombre.charAt(0) }}{{ tarea.usuario.apellido.charAt(0) }}
+                            </div>
+                            <div class="task-meta">
+                                <span class="meta-tag">⏱ {{ tarea.estimacion }}h</span>
+                                <span class="meta-date">{{ tarea.fecha_creacion | date:'dd MMM' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    }
+                </div>
+            </div>
+
+            <button class="btn-add-task" (click)="abrirModalTarea(columna.id)">
+                ＋ Añadir tarea
+            </button>
+        </div>
+        }
+    </div>
+</div>
+}
+
+<!-- Modal: Nueva Columna -->
+@if (showAddColModal) {
+<div class="modal-backdrop" (click)="showAddColModal = false">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+        <div class="modal-title">Nueva columna</div>
+
+        <div class="form-group">
+            <label class="form-label">Nombre</label>
+            <input type="text" [(ngModel)]="colNombre" placeholder="Ej: En revisión" class="input-field">
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Color</label>
+            <input type="color" [(ngModel)]="colColor" class="input-field"
+                style="height: 48px; padding: 4px; cursor: pointer;">
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn-secondary" (click)="showAddColModal = false">Cancelar</button>
+            <button class="btn-primary" (click)="crearColumna()">Crear columna</button>
+        </div>
+    </div>
+</div>
+}
+
+<!-- Modal: Nueva Tarea -->
+@if (showAddTaskModal) {
+<div class="modal-backdrop" (click)="showAddTaskModal = false">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+        <div class="modal-title">Nueva tarea</div>
+
+        <div class="form-group">
+            <label class="form-label">Título</label>
+            <input type="text" [(ngModel)]="taskNombre" placeholder="Ej: Diseñar pantalla login" class="input-field">
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Descripción</label>
+            <textarea [(ngModel)]="taskDesc" placeholder="¿Qué hay que hacer?" class="input-field"
+                style="height: 90px; resize: none;"></textarea>
+        </div>
+
+        <div style="display: flex; gap: 1rem;">
+            <div class="form-group" style="flex:1;">
+                <label class="form-label">Estimación (h)</label>
+                <input type="number" [(ngModel)]="taskEstimacion" placeholder="0" class="input-field" min="0">
+            </div>
+            <div class="form-group" style="flex:1;">
+                <label class="form-label">Usuario</label>
+                <select [(ngModel)]="taskUsuarioId" class="input-field">
+                    <option [ngValue]="null" disabled>Seleccionar...</option>
+                    @for (user of userList; track user.id) {
+                    <option [value]="user.id">{{ user.nombre }} {{ user.apellido }}</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn-secondary" (click)="showAddTaskModal = false">Cancelar</button>
+            <button class="btn-primary" (click)="crearTarea()">Crear tarea</button>
+        </div>
+    </div>
+</div>
+}

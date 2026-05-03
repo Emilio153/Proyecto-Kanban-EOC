@@ -1,0 +1,14 @@
+<header class="header">
+    <div class="header-left">
+        <div class="logo">
+            <span class="logo-icon">⬡</span>
+            <span class="logo-text">TaskFlow EOC</span>
+        </div>
+    </div>
+    <div class="header-right">
+        <button class="theme-toggle" (click)="toggleTheme()" [title]="isDark ? 'Modo claro' : 'Modo oscuro'">
+            <span class="theme-icon">{{ isDark ? '☀️' : '🌙' }}</span>
+            <span class="theme-label">{{ isDark ? 'Claro' : 'Oscuro' }}</span>
+        </button>
+    </div>
+</header>

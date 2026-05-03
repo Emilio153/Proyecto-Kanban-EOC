@@ -1,0 +1,66 @@
+<div class="users-wrapper">
+    <div class="users-header">
+        <div>
+            <h1 class="section-title">Gestión de usuarios</h1>
+            <p class="subtitle">Administra los miembros del equipo</p>
+        </div>
+    </div>
+
+    <div class="users-layout">
+        <!-- Formulario -->
+        <div class="panel">
+            <div class="panel-header">
+                <span class="panel-icon">👤</span>
+                <h3 class="panel-title">Añadir usuario</h3>
+            </div>
+
+            <form (submit)="crearUsuario($event)">
+                <div class="form-group">
+                    <label class="form-label">Nombre</label>
+                    <input type="text" [(ngModel)]="nuevoNombre" name="nombre" class="input-field"
+                        placeholder="Nombre" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Apellidos</label>
+                    <input type="text" [(ngModel)]="nuevoApellido" name="apellido" class="input-field"
+                        placeholder="Apellidos" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" [(ngModel)]="nuevoEmail" name="email" class="input-field"
+                        placeholder="correo@ejemplo.com" required>
+                </div>
+
+                <button type="submit" class="btn-primary" style="width: 100%; margin-top: 0.5rem; justify-content: center;">
+                    ＋ Crear usuario
+                </button>
+            </form>
+        </div>
+
+        <!-- Lista -->
+        <div class="panel">
+            <div class="panel-header">
+                <span class="panel-icon">📋</span>
+                <h3 class="panel-title">Usuarios registrados</h3>
+                <span class="count-chip">{{ usuarios.length }}</span>
+            </div>
+
+            <div class="users-list">
+                <div *ngFor="let user of usuarios" class="user-row">
+                    <div class="user-avatar">
+                        {{ user.nombre.charAt(0) }}{{ user.apellido.charAt(0) }}
+                    </div>
+                    <div class="user-info">
+                        <p class="user-name">{{ user.nombre }} {{ user.apellido }}</p>
+                        <p class="user-meta">{{ user.email }} · ID: {{ user.id }}</p>
+                    </div>
+                    <button class="btn-danger" (click)="eliminarUsuario(user.id)" title="Eliminar usuario">🗑</button>
+                </div>
+
+                <p *ngIf="usuarios.length === 0" class="empty-msg">
+                    Aún no hay usuarios registrados.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

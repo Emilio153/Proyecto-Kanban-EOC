@@ -1,0 +1,72 @@
+<div class="dashboard-wrapper">
+    <div class="dashboard-header">
+        <div>
+            <h1 class="section-title">Mis proyectos</h1>
+        </div>
+        <button class="btn-primary" (click)="showAddModal = true">
+            ＋ Nuevo proyecto
+        </button>
+    </div>
+
+    @if (tableros.length === 0) {
+    <div class="empty-state">
+        <div class="empty-icon">📋</div>
+        <h2>Sin tableros todavía</h2>
+        <p>Crea tu primer tablero para empezar a organizar tareas</p>
+        <button class="btn-primary" (click)="showAddModal = true" style="margin-top: 1.5rem;">
+            ＋ Crear primer tablero
+        </button>
+    </div>
+    } @else {
+    <div class="boards-grid">
+        @for (t of tableros; track t.id) {
+        <div [routerLink]="['/board', t.id]" class="board-card">
+            <div class="board-card-accent" [style.background]="t.fondo"></div>
+            <div class="board-card-body">
+                <h3>{{ t.nombre }}</h3>
+                <p>{{ t.descripcion }}</p>
+            </div>
+            <div class="board-card-footer">
+                <span class="board-color-dot" [style.background]="t.fondo"></span>
+                <span class="board-open-label">Abrir →</span>
+            </div>
+        </div>
+        }
+    </div>
+    }
+</div>
+
+@if (showAddModal) {
+<div class="modal-backdrop" (click)="showAddModal = false">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+        <div class="modal-title">Nuevo proyecto</div>
+
+        <div class="form-group">
+            <label class="form-label">Nombre</label>
+            <input type="text" [(ngModel)]="nuevoNombre" placeholder="Ej: Lanzamiento App" class="input-field">
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Descripción</label>
+            <textarea [(ngModel)]="nuevoDesc" placeholder="Breve descripción del proyecto..." class="input-field"
+                style="height: 110px; resize: none;"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Color identificador</label>
+            <div style="display: flex; gap: 0.75rem; align-items: center; margin-top: 0.4rem;">
+                <input type="color" [(ngModel)]="nuevoColor" class="input-field"
+                    style="flex:1; height: 48px; padding: 4px; cursor: pointer;">
+                <div [style.background]="nuevoColor"
+                    style="width: 48px; height: 48px; border-radius: 10px; border: 2px solid var(--border); flex-shrink:0;">
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn-secondary" (click)="showAddModal = false">Cancelar</button>
+            <button class="btn-primary" (click)="crearTablero()">Crear proyecto</button>
+        </div>
+    </div>
+</div>
+}

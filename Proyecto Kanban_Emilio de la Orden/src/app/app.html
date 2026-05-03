@@ -1,0 +1,22 @@
+<app-header></app-header>
+<div class="app-layout">
+  <app-sidebar></app-sidebar>
+  <main class="app-main">
+    <router-outlet></router-outlet>
+  </main>
+</div>
+
+<style>
+.app-layout {
+  display: flex;
+  height: calc(100vh - 60px);
+  overflow: hidden;
+}
+.app-main {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0;
+  background: var(--bg-page);
+  transition: background 0.3s ease;
+}
+</style>
