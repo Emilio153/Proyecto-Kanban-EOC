@@ -14,9 +14,11 @@ import { Usuario } from '../../models/usuario';
 export class UserManagementComponent {
     usuarios: Usuario[] = [];
 
+    // Formulario
     nuevoNombre: string = '';
     nuevoApellido: string = '';
     nuevoEmail: string = '';
+    usuarioEditandoId: number | null = null; // Controla si estamos en edición
 
     constructor(private tableroService: TableroService) {
         this.refreshUsuarios();
@@ -26,7 +28,7 @@ export class UserManagementComponent {
         this.usuarios = this.tableroService.getUsuarios();
     }
 
-    crearUsuario(event: Event) {
+    guardarUsuario(event: Event) {
         event.preventDefault();
 
         if (!this.nuevoNombre || !this.nuevoApellido || !this.nuevoEmail) {
@@ -34,26 +36,52 @@ export class UserManagementComponent {
             return;
         }
 
-        const result = this.tableroService.createUsuario(
-            this.nuevoNombre,
-            this.nuevoApellido,
-            this.nuevoEmail
-        );
-
-        if (result) {
-            this.refreshUsuarios();
-            this.resetForm();
+        if (this.usuarioEditandoId) {
+            // Modo Edición
+            const result = this.tableroService.updateUsuario(
+                this.usuarioEditandoId,
+                this.nuevoNombre,
+                this.nuevoApellido,
+                this.nuevoEmail
+            );
+            if (result) {
+                this.refreshUsuarios();
+                this.resetForm();
+            }
+        } else {
+            // Modo Creación
+            const result = this.tableroService.createUsuario(
+                this.nuevoNombre,
+                this.nuevoApellido,
+                this.nuevoEmail
+            );
+            if (result) {
+                this.refreshUsuarios();
+                this.resetForm();
+            }
         }
+    }
+
+    editarUsuario(user: Usuario) {
+        this.usuarioEditandoId = user.id;
+        this.nuevoNombre = user.nombre;
+        this.nuevoApellido = user.apellido;
+        this.nuevoEmail = user.email;
     }
 
     eliminarUsuario(id: number) {
         if (confirm('¿Seguro que desea eliminar este usuario?')) {
             this.tableroService.deleteUsuario(id);
             this.refreshUsuarios();
+            // Si estaba editando al usuario que borró, limpiamos el formulario
+            if (this.usuarioEditandoId === id) {
+                this.resetForm();
+            }
         }
     }
 
     resetForm() {
+        this.usuarioEditandoId = null;
         this.nuevoNombre = '';
         this.nuevoApellido = '';
         this.nuevoEmail = '';

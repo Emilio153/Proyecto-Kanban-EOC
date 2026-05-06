@@ -86,15 +86,6 @@ export class TableroService {
       if (c)   this._columnas  = JSON.parse(c);
       if (tar) this._tareas    = JSON.parse(tar);
       if (u)   this._usuarios  = JSON.parse(u);
-
-      const mainBoard = this._tableros.find(b => b.id === 1);
-      if (mainBoard) mainBoard.fondo = COLORS.trabajo;
-
-      this._columnas.forEach(col => {
-        if (col.id === 11) col.color = COLORS.pendientes;
-        if (col.id === 12) col.color = COLORS.progreso;
-        if (col.id === 13) col.color = COLORS.completadas;
-      });
     }
   }
 
@@ -190,6 +181,25 @@ export class TableroService {
     this._usuarios.push(nuevo);
     this.saveToStorage();
     return nuevo;
+  }
+
+  updateUsuario(id: number, nombre: string, apellido: string, email: string): boolean {
+    const emailNorm = email.trim().toLowerCase();
+    // Validar que el email no exista en OTRO usuario distinto al que estamos editando
+    if (this._usuarios.some(u => u.email.toLowerCase() === emailNorm && u.id !== id)) {
+      alert('Ya existe otro usuario con ese email.');
+      return false;
+    }
+
+    const index = this._usuarios.findIndex(u => u.id === id);
+    if (index !== -1) {
+      this._usuarios[index].nombre = nombre.trim();
+      this._usuarios[index].apellido = apellido.trim();
+      this._usuarios[index].email = emailNorm;
+      this.saveToStorage();
+      return true;
+    }
+    return false;
   }
 
   deleteUsuario(id: number): void {

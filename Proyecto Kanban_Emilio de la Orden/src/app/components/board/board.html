@@ -8,13 +8,18 @@
                 <p class="board-desc">{{ tablero.descripcion }}</p>
             </div>
         </div>
-        <button class="btn-outline-primary" (click)="showAddColModal = true"
-            [class.disabled]="columnas.length >= 5">
-            ＋ Columna
-        </button>
+        <div style="display: flex; gap: 10px;">
+            <button class="btn-primary" (click)="abrirModalTarea()">
+                ＋ Nueva tarea
+            </button>
+            <button class="btn-outline-primary" (click)="showAddColModal = true"
+                [class.disabled]="columnas.length >= 5">
+                ＋ Columna
+            </button>
+        </div>
     </div>
 
-    <div class="board-columns" cdkDropListGroup>
+    <div class="board-columns">
         @for (columna of columnas; track columna.id) {
         <div class="column-wrapper">
             <div class="column">
@@ -27,13 +32,17 @@
                     <button class="btn-danger" (click)="eliminarColumna(columna.id)" title="Eliminar columna">🗑</button>
                 </div>
 
-                <div class="tasks-container" cdkDropList
-                    [cdkDropListData]="getTareasColumna(columna.id)"
-                    [id]="columna.id.toString()"
-                    (cdkDropListDropped)="drop($event)">
+                <div class="tasks-container"
+                    (dragover)="onDragOver($event)"
+                    (drop)="onDrop(columna.id, $event)">
 
                     @for (tarea of getTareasColumna(columna.id); track tarea.id) {
-                    <div class="task-card" cdkDrag>
+                    
+                    <div class="task-card" 
+                        draggable="true"
+                        (dragstart)="onDragStart(tarea, $event)"
+                        (dragend)="onDragEnd($event)">
+                        
                         <div class="task-card-header">
                             <span class="task-title">{{ tarea.nombre }}</span>
                             <button class="btn-danger" (click)="eliminarTarea(tarea.id)" title="Eliminar tarea">🗑</button>
@@ -52,17 +61,12 @@
                     }
                 </div>
             </div>
-
-            <button class="btn-add-task" (click)="abrirModalTarea(columna.id)">
-                ＋ Añadir tarea
-            </button>
         </div>
         }
     </div>
 </div>
 }
 
-<!-- Modal: Nueva Columna -->
 @if (showAddColModal) {
 <div class="modal-backdrop" (click)="showAddColModal = false">
     <div class="modal-box" (click)="$event.stopPropagation()">
@@ -87,7 +91,6 @@
 </div>
 }
 
-<!-- Modal: Nueva Tarea -->
 @if (showAddTaskModal) {
 <div class="modal-backdrop" (click)="showAddTaskModal = false">
     <div class="modal-box" (click)="$event.stopPropagation()">
